@@ -1,0 +1,48 @@
+.form {
+  max-width: 952px;
+  width: 100%;
+  display: flex;
+  gap: 0 20px;
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 40px 0;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.buttons {
+  width: 100%;
+  display: flex;
+  gap: 0 20px; 
+}
+
+.big {
+  width: 352px;
+}
+
+.item {
+  display: flex;
+  align-items: baseline;
+  gap: 0 10px;
+}
+
+.circles {
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.small {
+  position: absolute;
+  bottom: 80px;
+  left: 10px;
+}

@@ -1,0 +1,24 @@
+.menu {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.select {
+  display: flex;
+  gap: 0 10px;
+  align-items: center;
+}
+
+.buttons {
+  display: flex;
+  gap: 0 20px;
+}
+
+.bars {
+  display: flex;
+  flex: 1;
+  gap: 0 10px;
+  align-items: flex-end;
+  padding-bottom: 20px;
+}
