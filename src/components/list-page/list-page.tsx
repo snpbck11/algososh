@@ -9,142 +9,7 @@ import { update } from "../../utils/utils";
 import { DELAY_IN_MS } from "../../constants/delays";
 import { Circle } from "../ui/circle/circle";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
-
-class Node<T> {
-  value: T;
-  next: Node<T> | null;
-
-  constructor(value: T, next?: Node<T> | null) {
-    this.value = value;
-    this.next = next === undefined ? null : next;
-  }
-}
-
-interface ILinkedList<T> {
-  append: (element: T) => void;
-  getSize: () => number;
-}
-
-class LinkedList<T> implements ILinkedList<T> {
-  private head: Node<T> | null;
-  private size: number;
-
-  constructor(array?: T[]) {
-    this.head = null;
-    this.size = 0;
-    array?.forEach((node) => this.append(node));
-  }
-
-  append(element: T) {
-    const node = new Node(element);
-    if (!this.head) {
-      this.head = node;
-    } else {
-      let current = this.head;
-      while (current?.next) {
-        current = current.next;
-      }
-      if (current) {
-        current.next = new Node(element);
-      }
-    }
-    this.size++;
-  }
-
-  prepend(element: T) {
-    const node = new Node(element);
-    node.next = this.head;
-    this.head = node;
-    this.size++;
-  }
-
-  getByIndex(position: number) {
-    if (position < 0 || position > this.size) {
-      throw new Error("Такого индекса не существует");
-    }
-    let current = this.head;
-    let index = 0;
-    while (index < position) {
-      current = current ? current.next : null;
-      index++;
-    }
-    return current ? current.value : null;
-  }
-
-  addByIndex(position: number, value: T) {
-    if (position < 0 || position > this.size) {
-      throw new Error("Такого индекса не существует");
-    }
-    const node = new Node(value);
-    if (position === 0) {
-      node.next = this.head;
-      this.head = node;
-    } else {
-      let current = this.head;
-      let prev = null;
-      let index = 0;
-      while (index < position) {
-        prev = current;
-        current = current ? current.next : null;
-        index++;
-      }
-      if (prev) {
-        prev.next = node;
-      }
-      node.next = current;
-    }
-    this.size++;
-  }
-
-  removeByIndex(position: number) {
-    if (position < 0 || position > this.size) {
-      throw new Error("Такого индекса не существует");
-    }
-    let current = this.head;
-    if (position === 0 && current) {
-      this.head = current.next;
-    } else {
-      let prev = null;
-      let index = 0;
-      while (index < position) {
-        prev = current;
-        current = current ? current.next : null;
-        index++;
-      }
-      if (prev && current) {
-        prev.next = current.next;
-      }
-    }
-    this.size--;
-    return current ? current.value : null;
-  }
-
-  removeHead = () => {
-    let temp = this.head;
-    if (temp) {
-      this.head = temp.next;
-      this.size--;
-      return;
-    }
-  };
-
-  removeTail = () => {
-    if (!this.head || !this.head.next) {
-      return null;
-    }
-    let current = this.head;
-    while (current.next) {
-      current = current.next;
-    }
-    current.next = null;
-    this.size--;
-    return current ? current.value : null;
-  };
-
-  isEmpty = () => this.size === 0;
-
-  getSize = () => this.size;
-}
+import { LinkedList } from "./utils";
 
 export const ListPage: React.FC = () => {
   const initialList = useMemo(() => ["10", "2", "31", "12"], []);
@@ -154,14 +19,21 @@ export const ListPage: React.FC = () => {
   );
   const initialListArray: TStackElement[] = useMemo(() => [], []);
   const [value, setValue] = useState("");
-  const [index, setIndex] = useState<number>(0);
+  const [index, setIndex] = useState("");
   const [listElements, setListElements] = useState<(TStackElement | null)[]>(
     []
   );
-  const [inProgress, setInProgress] = useState(false);
+  const [inProgress, setInProgress] = useState({
+    addInHead: false,
+    addInTail: false,
+    deleteFromHead: false,
+    deleteFromTail: false,
+    addByIndex: false,
+    deleteByIndex: false,
+  });
 
   const handleAddInHead = async () => {
-    setInProgress(true);
+    setInProgress({ ...inProgress, addInHead: true });
     listElements[0]!.isHead = false;
     listElements[0]!.isLinked = true;
     listElements[0]!.changingPosition = true;
@@ -179,13 +51,13 @@ export const ListPage: React.FC = () => {
     setListElements([...listElements]);
     listElements[0]!.state = ElementStates.Default;
     await update([...listElements], setListElements, DELAY_IN_MS);
-    setInProgress(false);
-    setIndex(0);
+    setInProgress({ ...inProgress, addInHead: false });
+    setIndex("");
     setValue("");
   };
 
   const handleAddInTail = async () => {
-    setInProgress(true);
+    setInProgress({ ...inProgress, addInTail: true });
     let tailIndex = list.getSize() - 1;
     if (tailIndex === 0) {
       listElements[tailIndex]!.isHead = false;
@@ -209,13 +81,13 @@ export const ListPage: React.FC = () => {
     tailIndex = list.getSize() - 1;
     listElements[tailIndex]!.state = ElementStates.Default;
     await update([...listElements], setListElements, DELAY_IN_MS);
-    setInProgress(false);
-    setIndex(0);
+    setInProgress({ ...inProgress, addInTail: false });
+    setIndex("");
     setValue("");
   };
 
   const handleDeleteFromHead = async () => {
-    setInProgress(true);
+    setInProgress({ ...inProgress, deleteFromHead: true });
     listElements[0]!.changingPosition = true;
     listElements[0]!.newValue = listElements[0]!.value;
     listElements[0]!.value = "";
@@ -225,13 +97,13 @@ export const ListPage: React.FC = () => {
     listElements.shift();
     listElements[0]!.isHead = true;
     await update([...listElements], setListElements, DELAY_IN_MS);
-    setInProgress(false);
-    setIndex(0);
+    setInProgress({ ...inProgress, deleteFromHead: false });
+    setIndex("");
     setValue("");
   };
 
   const handleDeleteFromTail = async () => {
-    setInProgress(true);
+    setInProgress({ ...inProgress, deleteFromTail: true });
     listElements[list.getSize() - 1]!.changingPosition = true;
     listElements[list.getSize() - 1]!.newValue =
       listElements[list.getSize() - 1]!.value;
@@ -244,27 +116,28 @@ export const ListPage: React.FC = () => {
     listElements[list.getSize() - 1]!.isTail = true;
     listElements[list.getSize() - 1]!.isLinked = false;
     await update([...listElements], setListElements, DELAY_IN_MS);
-    setInProgress(false);
-    setIndex(0);
+    setInProgress({ ...inProgress, deleteFromTail: false });
+    setIndex("");
     setValue("");
   };
 
   const handleAddByIndex = async () => {
-    setInProgress(true);
-    list.addByIndex(index, value);
-    for (let i = 0; i <= index; i++) {
+    setInProgress({ ...inProgress, addByIndex: true });
+    const number = parseFloat(index);
+    list.addByIndex(number, value);
+    for (let i = 0; i <= number; i++) {
       listElements[i]!.state = ElementStates.Changing;
       listElements[i]!.changingPosition = true;
       listElements[i]!.newValue = value;
       listElements[i]!.isHead = false;
       await update([...listElements], setListElements, DELAY_IN_MS);
       listElements[i]!.changingPosition = false;
-      if (index !== 0) {
+      if (number !== 0) {
         listElements[0]!.isHead = true;
       }
     }
-    const insertedNode = list.getByIndex(index);
-    listElements.splice(index, 0, {
+    const insertedNode = list.getByIndex(number);
+    listElements.splice(number, 0, {
       value: insertedNode ? insertedNode : "",
       state: ElementStates.Modified,
       isLinked: true,
@@ -272,24 +145,25 @@ export const ListPage: React.FC = () => {
     listElements[0]!.isHead = true;
     listElements[list.getSize() - 1]!.isTail = true;
     setListElements([...listElements]);
-    for (let i = 0; i <= index + 1; i++) {
+    for (let i = 0; i <= number + 1; i++) {
       listElements[i]!.state = ElementStates.Default;
     }
     await update([...listElements], setListElements, DELAY_IN_MS);
-    setInProgress(false);
-    setIndex(0);
+    setInProgress({ ...inProgress, addByIndex: false });
+    setIndex("");
     setValue("");
   };
 
   const handleDeleteByIndex = async () => {
-    setInProgress(true);
-    list.removeByIndex(index);
-    for (let i = 0; i <= index; i++) {
+    setInProgress({ ...inProgress, deleteByIndex: true });
+    const number = parseFloat(index);
+    list.removeByIndex(number);
+    for (let i = 0; i <= number; i++) {
       listElements[i]!.state = ElementStates.Changing;
       listElements[i]!.changingPosition = true;
       listElements[i]!.isTail = false;
       setListElements([...listElements]);
-      if (i === index) {
+      if (i === number) {
         const value = listElements[i]!.value;
         listElements[i]!.value = "";
         await update([...listElements], setListElements, DELAY_IN_MS);
@@ -299,16 +173,16 @@ export const ListPage: React.FC = () => {
       listElements[i]!.changingPosition = false;
       setListElements([...listElements]);
     }
-    listElements.splice(index, 1);
+    listElements.splice(number, 1);
     listElements[0]!.isHead = true;
     listElements[list.getSize() - 1]!.isTail = true;
     listElements[list.getSize() - 1]!.isLinked = false;
     setListElements([...listElements]);
-    for (let i = 0; i < index; i++) {
+    for (let i = 0; i < number; i++) {
       listElements[i]!.state = ElementStates.Default;
     }
-    setInProgress(false);
-    setIndex(0);
+    setInProgress({ ...inProgress, deleteByIndex: false });
+    setIndex("");
     setValue("");
   };
 
@@ -317,7 +191,7 @@ export const ListPage: React.FC = () => {
   };
 
   const handleChangeIndex = (e: React.FormEvent<HTMLInputElement>) => {
-    setIndex(parseInt(e.currentTarget.value));
+    setIndex(e.currentTarget.value);
   };
 
   const setColor = (item: TStackElement) => {
@@ -352,14 +226,12 @@ export const ListPage: React.FC = () => {
               value={value}
               onChange={handleChangeValue}
               minLength={1}
-              disabled={inProgress}
               isLimitText={true}
             />
             <Input
               placeholder="Введите индекс"
               type="number"
               value={index}
-              disabled={inProgress}
               onChange={handleChangeIndex}
             />
           </div>
@@ -369,24 +241,24 @@ export const ListPage: React.FC = () => {
                 text="Добавить в head"
                 onClick={handleAddInHead}
                 disabled={value === ""}
-                isLoader={inProgress}
+                isLoader={inProgress.addInHead}
               />
               <Button
                 text="Добавить в tail"
                 onClick={handleAddInTail}
-                isLoader={inProgress}
+                isLoader={inProgress.addInTail}
                 disabled={value === ""}
               />
               <Button
                 text="Удалить из head"
                 onClick={handleDeleteFromHead}
-                isLoader={inProgress}
+                isLoader={inProgress.deleteFromHead}
                 disabled={list.isEmpty()}
               />
               <Button
                 text="Удалить из tail"
                 onClick={handleDeleteFromTail}
-                isLoader={inProgress}
+                isLoader={inProgress.deleteFromTail}
                 disabled={list.isEmpty()}
               />
             </div>
@@ -395,15 +267,24 @@ export const ListPage: React.FC = () => {
                 text="Добавить по индексу"
                 extraClass={styles.big}
                 onClick={handleAddByIndex}
-                isLoader={inProgress}
-                disabled={value === ""}
+                isLoader={inProgress.addByIndex}
+                disabled={
+                  value === "" ||
+                  index === "" ||
+                  parseFloat(index) > listElements.length - 1
+                }
               />
               <Button
                 text="Удалить по индексу"
                 extraClass={styles.big}
                 onClick={handleDeleteByIndex}
-                isLoader={inProgress}
-                disabled={list.isEmpty()}
+                isLoader={inProgress.deleteByIndex}
+                disabled={
+                  list.isEmpty() ||
+                  parseFloat(index) < 0 ||
+                  parseFloat(index) > listElements.length - 1 ||
+                  index === ""
+                }
               />
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { ElementStates } from "../types/element-states";
-import { TElement, TStackElement } from "../types/types";
+import { TElement } from "../types/types";
 
 export const swap = <T>(arr: T[], firstIndex: number, secondIndex: number) => {
   const temp = arr[firstIndex];

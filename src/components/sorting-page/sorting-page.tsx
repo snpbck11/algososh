@@ -93,7 +93,6 @@ export const SortingPage: React.FC = () => {
   useEffect(() => {
     setSortSelect(Sort.Select);
     getRandomArr();
-    console.log(arr);
   }, []);
 
   return (
@@ -119,7 +118,7 @@ export const SortingPage: React.FC = () => {
               text="По возрастанию"
               sorting={Direction.Ascending}
               disabled={inProgress}
-              isLoader={inProgress}
+              isLoader={inProgress && isAscending}
               onClick={() => handleSort(Direction.Ascending)}
             />
             <Button

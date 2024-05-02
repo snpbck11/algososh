@@ -8,38 +8,17 @@ import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
-
-interface IStack<T> {
-  push: (item: T) => void;
-  pop: () => void;
-  peek: () => T | null;
-  clear: () => void;
-}
-
-class Stack<T> implements IStack<T> {
-  private container: (T | null)[] = [];
-  getElements = () => this.container;
-  getSize = () => this.container.length;
-  isEmpty = () => this.container.length === 0;
-  push = (item: T) => this.container.push(item);
-  pop = () => {
-    if (this.container.length > 0) {
-      return this.container.pop();
-    }
-  };
-  peek = () => this.container[this.container.length - 1];
-  clear = () => (this.container = []);
-}
+import { Stack } from "./utils";
 
 const stack = new Stack<TStackElement>();
 
 export const StackPage: React.FC = () => {
   const [value, setValue] = useState("");
   const [stackItems, setStackItems] = useState<(TStackElement | null)[]>([]);
-  const [inProgress, setInProgress] = useState(false);
+  const [inProgress, setInProgress] = useState({add: false, delete: false, clear: false});
 
   const handleAddInStack = async () => {
-    setInProgress(true);
+    setInProgress({...inProgress, add: true});
     let lastElement = stack.peek();
     if (!stack.isEmpty() && lastElement) {
       lastElement.isHead = false;
@@ -56,11 +35,11 @@ export const StackPage: React.FC = () => {
     }
     await update([...stack.getElements()], setStackItems, SHORT_DELAY_IN_MS);
     setValue("");
-    setInProgress(false);
+    setInProgress({...inProgress, add: false});
   };
 
   const handleDelete = async () => {
-    setInProgress(true);
+    setInProgress({...inProgress, delete: true});
     let lastElement = stack.peek();
     if (!stack.isEmpty() && lastElement) {
       lastElement.state = ElementStates.Changing;
@@ -76,25 +55,30 @@ export const StackPage: React.FC = () => {
 
     await update([...stack.getElements()], setStackItems, SHORT_DELAY_IN_MS);
 
-    setInProgress(false);
+    setInProgress({...inProgress, delete: false});
   };
 
   const handleClearStack = async () => {
-    setInProgress(true);
+    setInProgress({...inProgress, clear: true});
     stack.clear();
     await update([...stack.getElements()], setStackItems, SHORT_DELAY_IN_MS);
-    setInProgress(false);
+    setInProgress({...inProgress, clear: false});
   };
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleAddInStack()
+  }
+
   return (
     <SolutionLayout title="Стек">
       <div className="container">
         <div className={styles.menu}>
-          <form className={styles.form}>
+          <form className={styles.form} onSubmit={handleSubmit}>
             <Input
               value={value}
               type="text"
@@ -106,23 +90,24 @@ export const StackPage: React.FC = () => {
               onChange={handleChange}
             />
             <Button
-              type="button"
+              type="submit"
               text="Добавить"
-              isLoader={inProgress}
-              disabled={value === ""}
-              onClick={handleAddInStack}
+              isLoader={inProgress.add}
+              disabled={value === "" || value.length > 4 || inProgress.add}
             />
             <Button
               type="button"
               text="Удалить"
-              isLoader={inProgress}
+              isLoader={inProgress.delete}
               onClick={handleDelete}
+              disabled={stackItems.length <= 0}
             />
           </form>
           <Button
             type="button"
             text="Очистить"
-            isLoader={inProgress}
+            disabled={stackItems.length <= 0}
+            isLoader={inProgress.clear}
             onClick={handleClearStack}
           />
         </div>

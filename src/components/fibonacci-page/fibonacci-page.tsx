@@ -20,14 +20,14 @@ const getFiboncciSequence = (n: number) => {
 };
 
 export const FibonacciPage: FC = () => {
-  const [number, setNumber] = useState(-1);
+  const [number, setNumber] = useState("");
   const [generatedNumbers, setGeneratedNumbers] = useState<(TElement | null)[]>(
     []
   );
   const [inProgress, setInProgress] = useState(false);
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setNumber(parseFloat(e.currentTarget.value));
+    setNumber(e.currentTarget.value);
   };
 
   const onSubmit = (e: React.SyntheticEvent) => {
@@ -37,7 +37,9 @@ export const FibonacciPage: FC = () => {
 
   const generateFibonacci = async () => {
     setInProgress(true);
-    const fibonacciNumbers = number ? [...getFiboncciSequence(number)] : [];
+    const fibonacciNumbers = number
+      ? [...getFiboncciSequence(parseFloat(number))]
+      : [];
     const numbers: TElement[] = [];
     for (let i = 0; i < fibonacciNumbers.length; i++) {
       numbers.push({
@@ -47,7 +49,7 @@ export const FibonacciPage: FC = () => {
       await update(numbers, setGeneratedNumbers, SHORT_DELAY_IN_MS);
     }
     setInProgress(false);
-    setNumber(-1);
+    setNumber("");
   };
 
   return (
@@ -57,6 +59,7 @@ export const FibonacciPage: FC = () => {
           <Input
             placeholder="Введите число от 1 до 19"
             type="number"
+            value={number}
             min={1}
             max={19}
             maxLength={2}
@@ -66,7 +69,7 @@ export const FibonacciPage: FC = () => {
           <Button
             text="Рассчитать"
             type="submit"
-            disabled={inProgress}
+            disabled={inProgress || number === "" || parseFloat(number) > 19}
             isLoader={inProgress}
           />
         </form>

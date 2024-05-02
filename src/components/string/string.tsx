@@ -84,7 +84,7 @@ export const StringComponent: FC = () => {
           <Button
             type="submit"
             text="Развернуть"
-            disabled={inProgress}
+            disabled={inProgress || string === ""}
             isLoader={inProgress}
           />
         </form>
