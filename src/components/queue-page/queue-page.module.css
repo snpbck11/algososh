@@ -1,0 +1,12 @@
+.menu {
+  max-width: 830px;
+  width: 100%;
+  display: flex;
+  gap: 0 80px;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  gap: 0 12px;
+}
