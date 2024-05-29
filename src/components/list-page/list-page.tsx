@@ -70,7 +70,8 @@ export const ListPage: React.FC = () => {
     listElements[tailIndex]!.changingPosition = false;
     listElements[0]!.isHead = true;
     list.append(value);
-    const tail = list.getByIndex(tailIndex);
+    const newTailIndex = list.getSize() - 1;
+    const tail = list.getByIndex(newTailIndex);
     listElements.push({
       value: tail ? tail : "",
       state: ElementStates.Modified,
@@ -158,6 +159,7 @@ export const ListPage: React.FC = () => {
     setInProgress({ ...inProgress, deleteByIndex: true });
     const number = parseFloat(index);
     list.removeByIndex(number);
+    listElements[number]!.newValue = listElements[number]?.value;
     for (let i = 0; i <= number; i++) {
       listElements[i]!.state = ElementStates.Changing;
       listElements[i]!.changingPosition = true;

@@ -87,7 +87,7 @@ export const QueuePage: React.FC = () => {
   const handleClearQueue = async () => {
     setInProgress({...inProgress, clear: true});
     queue.clear();
-    await update([...initialElements], setQueueElements, SHORT_DELAY_IN_MS);
+    await update(initialElements, setQueueElements, SHORT_DELAY_IN_MS);
     setValue("");
     setInProgress({...inProgress, clear: false});
   };
@@ -131,7 +131,7 @@ export const QueuePage: React.FC = () => {
             />
           </form>
           <Button
-            type="button"
+            type="reset"
             text="Очистить"
             disabled={queue.isEmpty()}
             isLoader={inProgress.clear}
