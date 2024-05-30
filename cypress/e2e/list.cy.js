@@ -1,4 +1,4 @@
-import { changing, initial, modified } from "../constants/constants";
+import { changing, circles, circlesSmall, initial, modified } from "../constants/constants";
 import { SHORT_DELAY_IN_MS, DELAY_IN_MS } from "../../src/constants/delays";
 
 describe('Проверка работоспособности страницы "Список"', () => {
@@ -26,7 +26,7 @@ describe('Проверка работоспособности страницы "
     cy.get("@addByIndex").should("be.disabled");
     cy.get("@deleteByIndex").should("be.disabled");
 
-    cy.get('[class*="circle_circle"]').as("circles");
+    cy.get(circles).as("circles");
 
     cy.get("@circles").then(($circle) => {
       expect(
@@ -43,8 +43,8 @@ describe('Проверка работоспособности страницы "
   it("Проверка корректности добавления элемента в head", () => {
     cy.get("@inputValue").type(initialValue);
     cy.get("@addInHead").click();
-    cy.get('[class*="circle_circle"]').as("circles");
-    cy.get('[class*="circle_small"').should("have.css", "border", changing).and("have.text", initialValue);
+    cy.get(circles).as("circles");
+    cy.get(circlesSmall).should("have.css", "border", changing).and("have.text", initialValue);
 
     cy.wait(SHORT_DELAY_IN_MS);
     cy.get("@circles").first().should("have.css", "border", modified).and("have.text", initialValue);
@@ -66,8 +66,8 @@ describe('Проверка работоспособности страницы "
   it("Проверка корректности добавления элемента в tail", () => {
     cy.get("@inputValue").type(initialValue);
     cy.get("@addInTail").click();
-    cy.get('[class*="circle_circle"]').as("circles");
-    cy.get('[class*="circle_small"').should("have.css", "border", changing).and("have.text", initialValue);
+    cy.get(circles).as("circles");
+    cy.get(circlesSmall).should("have.css", "border", changing).and("have.text", initialValue);
 
     cy.wait(SHORT_DELAY_IN_MS);
     cy.get("@circles").last().should("have.css", "border", modified).and("have.text", initialValue);
@@ -90,8 +90,8 @@ describe('Проверка работоспособности страницы "
     cy.get("@inputValue").type(initialValue);
     cy.get("@inputIndex").type(initialIndex);
     cy.get("@addByIndex").click();
-    cy.get('[class*="circle_circle"]').as("circles");
-    cy.get('[class*="circle_small"').should("have.css", "border", changing).and("have.text", initialValue);
+    cy.get(circles).as("circles");
+    cy.get(circlesSmall).should("have.css", "border", changing).and("have.text", initialValue);
 
     cy.wait(SHORT_DELAY_IN_MS);
     cy.get("@circles").eq(initialIndex).should("have.css", "border", modified).and("have.text", initialValue);
@@ -113,14 +113,14 @@ describe('Проверка работоспособности страницы "
 
   it("Проверка корректности удаления элемента из head", () => {
     cy.get("@deleteFromHead").click();
-    cy.get('[class*="circle_small"').should("have.css", "border", changing).and("have.text", initialArr[0]);
+    cy.get(circlesSmall).should("have.css", "border", changing).and("have.text", initialArr[0]);
 
     cy.wait(DELAY_IN_MS * 2);
 
     const modifiedArr = [...initialArr];
     modifiedArr.splice(0, 1);
 
-    cy.get('[class*="circle_circle"]').then(($circle) => {
+    cy.get(circles).then(($circle) => {
       $circle.each((index, $el) => {
         cy.wrap($el).should("have.css", "border", initial).and("have.text", modifiedArr[index]);
       });
@@ -133,14 +133,14 @@ describe('Проверка работоспособности страницы "
     const indexOfLastElemetn = initialArr.length - 1;
 
     cy.get("@deleteFromTail").click();
-    cy.get('[class*="circle_small"').should("have.css", "border", changing).and("have.text", initialArr[indexOfLastElemetn]);
+    cy.get(circlesSmall).should("have.css", "border", changing).and("have.text", initialArr[indexOfLastElemetn]);
 
     cy.wait(DELAY_IN_MS * 2);
 
     const modifiedArr = [...initialArr];
     modifiedArr.splice(indexOfLastElemetn, 1);
 
-    cy.get('[class*="circle_circle"]').then(($circle) => {
+    cy.get(circles).then(($circle) => {
       $circle.each((index, $el) => {
         cy.wrap($el).should("have.css", "border", initial).and("have.text", modifiedArr[index]);
       });
@@ -152,14 +152,14 @@ describe('Проверка работоспособности страницы "
   it("Проверка корректности удаления элемента по индексу", () => {
     cy.get("@inputIndex").type(initialIndex);
     cy.get("@deleteByIndex").click();
-    cy.get('[class*="circle_small"').should("have.css", "border", changing).and("have.text", initialArr[initialIndex]);
+    cy.get(circlesSmall).should("have.css", "border", changing).and("have.text", initialArr[initialIndex]);
 
     cy.wait(DELAY_IN_MS * 3);
 
     const modifiedArr = [...initialArr];
     modifiedArr.splice(initialIndex, 1);
 
-    cy.get('[class*="circle_circle"]').then(($circle) => {
+    cy.get(circles).then(($circle) => {
       $circle.each((index, $el) => {
         cy.wrap($el).should("have.css", "border", initial).and("have.text", modifiedArr[index]);
       });

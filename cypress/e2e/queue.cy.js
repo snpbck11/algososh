@@ -19,7 +19,7 @@ describe('Проверка страницы "Очередь"', () => {
   it("Проверка корректности добавления элементов в очередь", () => {
     cy.get("@input").type(queueArr[0]);
     cy.get("@add").click();
-    cy.get('[class*="circle_circle"]').as("circles");
+    cy.get(circles).as("circles");
 
     cy.get("@circles").should(($circle) => {
       expect($circle.eq(0)).to.have.css("border", changing).to.contain(queueArr[0]);
@@ -60,7 +60,7 @@ describe('Проверка страницы "Очередь"', () => {
       cy.wait(DELAY_IN_MS);
     });
 
-    cy.get('[class*="circle_circle"]').as("circles");
+    cy.get(circles).as("circles");
 
     cy.get("@delete").click();
 
@@ -88,7 +88,7 @@ describe('Проверка страницы "Очередь"', () => {
       cy.get("@add").click();
       cy.wait(DELAY_IN_MS);
     });
-    cy.get('[class*="circle_circle"]').as("circles");
+    cy.get(circles).as("circles");
     cy.get("@reset").click();
 
     cy.wait(SHORT_DELAY_IN_MS);

@@ -22,7 +22,7 @@ describe('Проверка страницы "Стек"', () => {
       cy.get("@input").type(stackArr[0]);
       cy.get("@button").click();
 
-      cy.get('[class*="circle_circle"]').as("circles");
+      cy.get(circles).as("circles");
 
       cy.get("@circles").should(($circle) => {
         expect($circle).to.have.length(1).to.contain(stackArr[0]).to.have.css("border", initial);
@@ -34,7 +34,7 @@ describe('Проверка страницы "Стек"', () => {
     cy.get("@input").type(stackArr[0]);
     cy.get("@button").click();
 
-    cy.get('[class*="circle_circle"]').as("circles");
+    cy.get(circles).as("circles");
 
     cy.get("@circles").should(($circle) => {
       expect($circle).to.have.length(1).to.contain(stackArr[0]).to.have.css("border", initial);
@@ -42,7 +42,7 @@ describe('Проверка страницы "Стек"', () => {
 
     cy.get("@delete").click();
 
-    cy.get('[class*="circle_circle"]').should("not.exist");
+    cy.get(circles).should("not.exist");
   });
 
   it("Проверка корректности очистки элементов из стека", () => {
@@ -52,7 +52,7 @@ describe('Проверка страницы "Стек"', () => {
       cy.wait(DELAY_IN_MS);
     });
 
-    cy.get('[class*="circle_circle"]').as("circles");
+    cy.get(circles).as("circles");
 
     cy.get("@circles").should(($circle) => {
       expect($circle).to.have.length(stackArr.length);

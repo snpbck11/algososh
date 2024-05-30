@@ -9,7 +9,7 @@ describe("Тест кнопки", () => {
     expect(button).toMatchSnapshot();
   });
   it("Кнопка без текста рендерится без ошибок", () => {
-    const button = renderer.create(<Button text="" />).toJSON();
+    const button = renderer.create(<Button />).toJSON();
     expect(button).toMatchSnapshot();
   });
   it("Заблокированная кнопка рендерится без ошибок", () => {

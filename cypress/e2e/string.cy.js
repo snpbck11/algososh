@@ -19,7 +19,7 @@ describe("Тестирование страницы строки", () => {
   it("Проверка корректности разворота строки", () => {
     cy.get("@input").type(inputString);
     cy.get("@button").click();
-    cy.get('[class*="circle_circle"]').as("circles");
+    cy.get(circles).as("circles");
 
     cy.get("@circles").should(($circle) => {
       expect($circle).to.have.length(inputString.length);

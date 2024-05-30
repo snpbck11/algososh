@@ -1,3 +1,5 @@
+import { circles } from "../constants/constants"
+
 describe('Проверка работоспособности страницы "Фибоначчи"', () => {
   const fibonacciArr = ['1', '1', '2', '3', '5', '8', '13']
   beforeEach(() => {
@@ -13,7 +15,7 @@ describe('Проверка работоспособности страницы "
   it('Проверка корректности генерации чисел', () => {
     cy.get('@input').type('6');
     cy.get('@button').click()
-    cy.get('[class*=circle_circle]').as('circles')
+    cy.get(circles).as('circles')
 
     cy.get('@circles').should(($circle) => {
       expect($circle).to.have.length(6)
