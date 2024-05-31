@@ -104,7 +104,7 @@ export const StackPage: React.FC = () => {
             />
           </form>
           <Button
-            type="button"
+            type="reset"
             text="Очистить"
             disabled={stackItems.length <= 0}
             isLoader={inProgress.clear}
