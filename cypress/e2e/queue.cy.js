@@ -1,4 +1,4 @@
-import { changing, initial } from "../constants/constants";
+import { circles, changing, initial } from "../constants/constants";
 import { SHORT_DELAY_IN_MS, DELAY_IN_MS } from "../../src/constants/delays";
 
 describe('Проверка страницы "Очередь"', () => {

@@ -1,5 +1,5 @@
 import { SHORT_DELAY_IN_MS } from "../../src/constants/delays";
-import {initial, changing, modified} from "../constants/constants"
+import {initial, changing, modified, circles} from "../constants/constants"
 
 describe("Тестирование страницы строки", () => {
   const inputString = "hello";

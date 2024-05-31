@@ -1,5 +1,5 @@
 import { DELAY_IN_MS } from "../../src/constants/delays";
-import { initial, changing } from "../constants/constants";
+import { circles, initial } from "../constants/constants";
 
 describe('Проверка страницы "Стек"', () => {
   const stackArr = ["asd", "dsa", "sda"];
@@ -21,7 +21,6 @@ describe('Проверка страницы "Стек"', () => {
     {
       cy.get("@input").type(stackArr[0]);
       cy.get("@button").click();
-
       cy.get(circles).as("circles");
 
       cy.get("@circles").should(($circle) => {
